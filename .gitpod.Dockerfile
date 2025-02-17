@@ -1,13 +1,15 @@
-# Use an appropriate base image
-FROM ubuntu:20.04
+# .gitpod.Dockerfile
+FROM gitpod/workspace-full-vnc:latest
 
 # Set environment variables for non-interactive installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update package lists and install necessary packages
+# Install KDE Plasma Desktop and other necessary packages
+USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     sudo \
+    git \
     dbus-x11 \
     kde-plasma-desktop \
     tightvncserver \
@@ -29,7 +31,7 @@ WORKDIR /home/prt
 RUN mkdir -p ~/.vnc && \
     echo "prt" | vncpasswd -f > ~/.vnc/passwd && \
     chmod 600 ~/.vnc/passwd && \
-    echo '#!/bin/bash\nstartplasma-x11 &' > ~/.vnc/xstartup && \
+    echo '#!/bin/bash\nxrdb $HOME/.Xresources\nstartplasma-x11 &' > ~/.vnc/xstartup && \
     chmod +x ~/.vnc/xstartup
 
 # Install Tailscale
